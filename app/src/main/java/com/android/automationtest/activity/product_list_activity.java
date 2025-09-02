@@ -15,8 +15,10 @@ import com.android.automationtest.response.productListResponse;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class product_list_activity extends AppCompatActivity implements OnQuantityChangeListener {
 
@@ -35,7 +37,10 @@ public class product_list_activity extends AppCompatActivity implements OnQuanti
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
-        currencyFormat = new DecimalFormat("$#,##0.00");
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("id", "ID"));
+        symbols.setGroupingSeparator('.');
+        symbols.setMonetaryDecimalSeparator(',');
+        currencyFormat = new DecimalFormat("Rp #,##0", symbols);
 
         tvOrderAmount = findViewById(R.id.tv_order_amount);
         tvTax = findViewById(R.id.tv_tax);
@@ -46,9 +51,9 @@ public class product_list_activity extends AppCompatActivity implements OnQuanti
 
         productList = new ArrayList<>();
 
-        productList.add(new productListResponse("Mie Ayam", 40.000, R.drawable.menu_1));
-        productList.add(new productListResponse("Es Teh Manis", 35.000, R.drawable.menu_2));
-        productList.add(new productListResponse("Bakso", 50.000, R.drawable.menu_3));
+        productList.add(new productListResponse("Mie Ayam", 40000, R.drawable.menu_1));
+        productList.add(new productListResponse("Es Teh Manis", 35000, R.drawable.menu_2));
+        productList.add(new productListResponse("Bakso", 50000, R.drawable.menu_3));
 
 
 
