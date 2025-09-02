@@ -1,5 +1,6 @@
 package com.android.automationtest.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import com.android.automationtest.R;
 import com.android.automationtest.adapter.OrderedProductAdapter;
 import com.android.automationtest.response.productListResponse;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,9 @@ public class OrderDetailActivity extends AppCompatActivity {
 
     private TextView tvSubtotal, tvTax, tvGrandTotal;
     private Button btnQris, btnCash;
+    double subtotal = 0;
+    double tax = subtotal * 0.1;
+    double grandTotal = subtotal + tax;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +57,34 @@ public class OrderDetailActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter); // Set adapter ke RecyclerVifinalOrderListew
 
         // Hitung dan perbarui total
-
+        calculateAndDisplayTotals(subtotal, tax, grandTotal);
 
         // OnClickListener untuk tombol pembayaran
+
+
+    }
+
+    private void calculateAndDisplayTotals(double subtotal,double tax, double grandTotal) {
+
+        for (productListResponse product : finalOrderList) {
+            subtotal += product.getPrice() * product.getQuantity();
+        }
+
+        tax = subtotal * 0.1;
+        grandTotal = subtotal + tax;
+
+        DecimalFormat currencyFormat = new DecimalFormat("'Rp ' #,##0");
+
+        tvSubtotal.setText(currencyFormat.format(subtotal));
+        tvTax.setText(currencyFormat.format(tax));
+        tvGrandTotal.setText(currencyFormat.format(grandTotal));
+
+        String total = currencyFormat.format(grandTotal);
+
         btnQris.setOnClickListener(v -> {
-            Toast.makeText(this, "Membuka halaman pembayaran QRIS...", Toast.LENGTH_SHORT).show();
-            // Implementasi intent untuk halaman QRIS
+            Intent intent = new Intent(OrderDetailActivity.this, payment_qris.class);
+            intent.putExtra("total_payment", total);
+            startActivity(intent);
         });
 
         btnCash.setOnClickListener(v -> {
@@ -65,23 +92,6 @@ public class OrderDetailActivity extends AppCompatActivity {
             // Implementasi intent untuk halaman konfirmasi
         });
 
-        calculateAndDisplayTotals();
-    }
-
-    private void calculateAndDisplayTotals() {
-        double subtotal = 0;
-        for (productListResponse product : finalOrderList) {
-            subtotal += product.getPrice() * product.getQuantity();
-        }
-
-        double tax = subtotal * 0.1;
-        double grandTotal = subtotal + tax;
-
-        DecimalFormat currencyFormat = new DecimalFormat("'Rp ' #,##0");
-
-        tvSubtotal.setText(currencyFormat.format(subtotal));
-        tvTax.setText(currencyFormat.format(tax));
-        tvGrandTotal.setText(currencyFormat.format(grandTotal));
     }
 
 }
